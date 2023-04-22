@@ -1,0 +1,1 @@
+{"options":{"validator":{"$jsonSchema":{"bsonType":"object","required":["phrase"],"properties":{"_id":{"bsonType":"objectId"},"phrase":{"bsonType":"string"}}}}},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"6c83cb9e52dc45048c18f55dcbeb43cd","collectionName":"wordbank","type":"collection"}
