@@ -1,3 +1,4 @@
+let dbManager = require('databasemanager')
 let express= require('express');
 
 let app = express();
