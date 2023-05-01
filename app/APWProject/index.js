@@ -14,7 +14,7 @@ app.use(express.json())
 async function addUser(name, pass) {
   try {
     const base = await db.get('wordGame');
-    const collection = await base.getCollection('users');
+    const collection = await db.getCollection('users');
     const result = await collection.insertOne({
       username: name,
       password: pass 
