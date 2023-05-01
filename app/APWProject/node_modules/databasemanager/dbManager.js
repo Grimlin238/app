@@ -1,30 +1,38 @@
 const { MongoClient } = require('mongodb');
 const url = 'mongodb://127.0.0.1:27017/';
 const client = new MongoClient(url, { useUnifiedTopology: true });
-let database;
+let db;
 
 async function connect(dbName) {
   try {
     await client.connect();
-    const db = client.db(dbName);
+    const database = client.db(dbName);
     console.log(`Connected to ${dbName}`);
-    return db;
+    return database;
   } catch (error) {
     console.error(error);
   }
 }
 
-database = {
+const database = {
   async get(dbName) {
-    if (!database) {
-      database = await connect(dbName);
+    if (!db) {
+      db = await connect(dbName);
     }
-    return database;
+    return db;
+  },
+
+async getCollection(collectionName) {
+    if (!db) {
+      throw new Error('A database connection has not been established');
+    }
+    return db.collection(collectionName);
   },
 
   async close() {
     try {
       await client.close();
+      console.log('Connection closed');
     } catch (error) {
       console.error(error);
     }
@@ -32,4 +40,3 @@ database = {
 };
 
 module.exports = database;
- 
