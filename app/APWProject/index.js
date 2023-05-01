@@ -11,7 +11,25 @@ app.use("/user", userRouter)
 
 app.use(express.json())
 
-const users = []
+async function addUser(name, pass) {
+	try {
+	const wordGame = dbManager.get('wordGame');
+	
+	const collection = wordGame.collection('users');
+	const result = await collection.insertOne({
+		
+		username: name, 
+		
+		password: pass 
+	}); 
+	await dbManager.close();
+} catch (err) {
+	
+	console.error(err);
+	
+	throw err;
+}
+}
 
 app.get('/', (req, res) => {
 	
@@ -21,7 +39,7 @@ app.get('/', (req, res) => {
 app.get('/create', (req, res) => {
 	
 	res.send('<h1> Create an account </h1><form method="post"><h2> User Name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Create Account" onclick="createAccount()"></form>');
-	res.json(users)
+ 
 });
 
 app.get('/login', (req, res) => {
@@ -29,29 +47,17 @@ app.get('/login', (req, res) => {
 	res.send('<h1> Log in </h1><form method="post"><h2> User name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Log in"></form>');
 });
 
-app.post('/create', (req, res) => {
+app.post('/create', async (req, res) => {
 	
-	const{userName, passWord} = req.body;
+	const userName = req.body.userName;
 	
-	if (userName === "" && passWord === "") {
+	const pass = req.body.passWord;
 	
-		res.send('<h1> Create an account </h1><form method="post"><h2> User Name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Create Account"></form> <h2> Error creating account. Please go back and ensure all fields are inserted. </h2>');
-		//"Error creating ccount. Please go back and ensure all fields are inserted"
-		//<h1> Create an account </h1><form method="post"><h2> User Name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Create Account"></form> <h2> Error creating account. Please go back and ensure all fields are inserted </h2>
-	}
-	
-	// Below this comment
-	// please add user name to database as well as password
-	//
-	const user = { name: req.body.name, password: req.body.password }
-    users.push(user)
-	
-		
-		// database handling code goes here
-		// I will continue where you left off afterwords
+	await addUser(userName, pass);
+	res.send('<h1> Account created </h1> <p> Click continue to go to your dashboard </p> <a href="/dashBoard" target="_blank"> Continue </a>')
+});
 
-})
-
+/**
 app.post('/login', (req, res) =>
 
 {
@@ -61,9 +67,9 @@ app.post('/login', (req, res) =>
 	// Check if user name and passowrd is correct
 	
 })
-
-app.listen(8080, () => {
+*/
+app.listen(3000, () => {
 	
-	console.log("I'm listening on port 8080");
+	console.log("I'm listening on port 3000");
 	
 });
