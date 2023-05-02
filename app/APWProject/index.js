@@ -1,127 +1,21 @@
-const db = require('databasemanager')
-const express= require('express');
-const userRouter = require('./routes/user')
-
+const express = require('express')
+const handler = require('DbHandler')
 const app = express();
+
 app.use(express.urlencoded({
-  extended: true
-}));
-
-app.use("/user", userRouter)
-
+	extended: true
+}))
 app.use(express.json())
 
-async function addUser(name, pass) {
-  try {
-    const base = await db.get('wordGame');
-    const collection = await db.getCollection('users');
-    const result = await collection.insertOne({
-      username: name,
-      password: pass 
-    });
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-}
-
-async function findUser(user, pass) {
-	
-	try {
-		
-		const base = await db.get('wordGame')
-		
-		const collection = await db.getCollection('users')
-		
-		const doc = await collection.find({
-			
-			username: user,
-			password: pass
-		}).toArray();
-		
-		if (doc.length > 0) {
-			
-			return true
-			
-		} else {
-			
-			return false;
-			
-		}
-	} catch(error) {
-		
-		console.log(error);
-		
-	} finally {
-		
-		await db.close()
-		
-	}
-}
-
-async function addScore(userName, score) {
-  try {
-    const base = await db.get('wordGame');
-    const usersCollection = await db.getCollection('users');
-    const user = await usersCollection.findOne({ username: userName });
-    
-    if (!user) {
-      console.log('User not found');
-      return;
-    }
-    
-    const scoresCollection = await db.getCollection('scores');
-    const newScore = {
-      score: score,
-      user_id: user._id
-    };
-    
-    const result = await scoresCollection.insertOne(newScore);
-    console.log('Score ${score} added for user ${user.username}');
-  } catch (error) {
-    console.log(error);
-  } finally {
-    await db.close();
-  }
-}
-
-async function getScore(userName) {
-  try {
-    const base = await db.get('wordGame');
-    const usersCollection = await db.getCollection('users');
-    const user = await usersCollection.findOne({ username: userName });
-    
-    if (!user) {
-      console.log('User not found');
-      return 0;
-    }
-    
-    const scoresCollection = await db.getCollection('scores');
-    const userScore = await scoresCollection.findOne({ user_id: user._id });
-    
-    if (!userScore) {
-      console.log('Score not found');
-      return 0;
-    }
-    
-    console.log('Score for user ${user.username}: ${userScore.score}');
-    return userScore.score;
-  } catch (error) {
-    console.log(error);
-    return 0;
-  } finally {
-    await db.close();
-  }
-}
-
 var globalUser = "" // This will hold the user name when accessing it in local scopes
+
 app.get('/', (req, res) => {
   res.send('<h1> Welcome to insert app name </h1> <ul> <li> <a href="/create"> Create an account </a> </li></li> <a href="/login"> Log in </a> </li> </ul>');
 });
 
 app.get('/create', (req, res) => {
  
-  res.send('<h1> Create an account </h1><form method="post"><h2> User Name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Create Account" onclick="createAccount()"></form>');
+  res.send('<h1> Create an account </h1><form method="post"><h2> User Name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Create Account"></form>');
 });
 
 app.get('/dashboard', (req, res) => {
@@ -130,14 +24,25 @@ app.get('/dashboard', (req, res) => {
 })
 
 app.get('/profile', async (req, res) => {
-	let wpm = await getScore(globalUser)
+	let wpm = await handler.getScore(globalUser)
 	res.send('<nav style="background-color: blue;"> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Welcome to your profile </h1><br><h1> Profile Information</h1><p> Username: @' + globalUser + ' </p><br><p> WPM (Words Per Minute): ' + wpm + ' </p>')
 	
 })
 
-app.get('/leaderboard', (req, res) => {
+app.get('/leaderboard', async (req, res) => {
 	
-	res.send('<nav style="background-color: blue;"> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav>')
+	let leaderPage = '<nav style="background-color: blue;"> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Find your friends by their username </h1> <form method="post"> <h2> Enter username without the @ sign <h2> <input name="user"> <input type="submit" value="Search"> </form> <h3> Are you on the leader board? </h3> <ol>'
+	
+	let userAndScore = await handler.leaderBoard();
+	
+	for (let i = 0; i < userAndScore.length; i++) {
+		
+		leaderPage += '<li> User: @' + userAndScore[i].username + ' - WPM: ' + userAndScore.score + ' </li>'
+	}
+	
+	leaderPage += '</ol>'
+	
+	res.send(leaderPage)
 	
 })
 
@@ -149,11 +54,26 @@ app.post('/create', async (req, res) => {
   const userName = req.body.userName;
   const pass = req.body.passWord;
   await addUser(userName, pass);
-  await addScore(userName, 0)
+  await handler.addScore(userName, 0)
   globalUser = userName;
   
   res.send('<h1> Account created </h1> <p> Click continue to go to your dashboard </p> <a href="/dashBoard" target="_blank"> Continue </a>')
 });
+
+app.post('/leaderboard', async (req, res) => {
+	
+	const user = req.body.user
+const isFound = await handler.findOneUser(user)
+	
+	if (isFound) {	
+	const score = await handler.getScore(user)
+	
+	res.send('<h1> Result </1> <p> user: ' + user + 'sWPM: ' + score + '</p> <a href="/leaderboard"> Go Back to leader Board </a>')
+} else {
+	
+	res.send('<h1> Oops, we ran into a snag </h1> <p> We could not find the user name you were looking for, </p> <a href="/headerboard"> Go Back To Leader Board </a>')
+}
+})
 
 app.post('/login', async (req, res) => {
 	
@@ -161,7 +81,7 @@ app.post('/login', async (req, res) => {
 	
 	const pass = req.body.passWord;
 	
-	const isFound = await findUser(user, pass)
+	const isFound = await handler.findUser(user, pass)
 	
 	if (isFound) {
 		globalUser = user;
