@@ -26,7 +26,7 @@ app.get('/game', async (req, res) => {
 })
 
 app.get('/', (req, res) => {
-  res.send('<h1> Welcome to insert app name </h1> <ul> <li> <a href="/create"> Create an account </a> </li></li> <a href="/login"> Log in </a> </li> </ul>');
+  res.send('<h1> Welcome to TypeTonic </h1> <ul> <li> <a href="/create"> Create an account </a> </li></li> <a href="/login"> Log in </a> </li> </ul>');
 });
 
 app.get('/create', (req, res) => {
