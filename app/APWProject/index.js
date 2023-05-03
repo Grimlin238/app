@@ -66,7 +66,7 @@ app.get('/login', (req, res) => {
   res.send('<h1> Log in </h1><form method="post"><h2> User name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Log in"></form>');
 });
 
-app.post('/game', (req, res) => {
+app.post('/game', async (req, res) => {
 	
 	const entry = req.body.entry;
 	
@@ -79,6 +79,8 @@ app.post('/game', (req, res) => {
 	let wpm = Math.round(wordsEntered / (timeElapsed / 1000 / 60));
 	
 	globalScore = wpm;
+	
+	await handler.updateScore(globalUser, globalScore);
 	
 	if (entry === phrase) {
 		res.redirect('/game');		

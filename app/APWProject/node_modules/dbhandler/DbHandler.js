@@ -106,6 +106,41 @@ static async addScore(userName, score) {
   }
 }
 
+static async updateScore(forUser, withScore) {
+	
+	try {
+		
+		const base = await db.get('wordGame')
+		
+		const userCol = await db.getCollection('users')
+		
+		const scoreCol = await db.getCollection('scores')
+		
+		const userRes = await userCol.findOne({
+			
+			username: forUser
+			
+		});
+		
+		if (!userRes) {
+			
+			console("I can't seem to find that user")
+			
+		}
+		
+		const scoreRes = await scoreCol.updateOne({user_id: userRes._id}, { $set: { score: withScore}});
+		
+	} catch(err) {
+		
+		console.log(err)
+		
+	} finally {
+		
+		await db.close();
+		
+	}
+}
+
 static async getScore(userName) {
   try {
     const base = await db.get('wordGame');
