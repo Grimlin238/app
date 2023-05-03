@@ -17,8 +17,11 @@ app.get('/game', async (req, res) => {
 	
 	
 	phrase = await aPi.getData();
-	let gamePage = '<nav style="background: blue;"> <a href="/dashboard"> Leave and go back to dashboard </a> </nav> <h1> Let us begin! </h1> <form method="post"> <h1> Enter the phrase below: </h1> <p> WPM: ' + globalScore + ' </p> <p> Phrase: ' + phrase + '</p> <input name="entry"> <input type="submit" value="submit"> </form>'
 	
+	let timer = Date.now();
+	
+	let gamePage = '<nav style="background: blue;"> <a href="/dashboard"> Leave and go back to dashboard </a> </nav> <h1> Let us begin! </h1> <form method="post"> <h1> Enter the phrase below: </h1> <p> WPM: <span id="wpm">' + globalScore + '</span> </p> <p> Phrase: ' + phrase + '</p> <label for="entry"> Answer: </label> <input type="text" id="entry" name="entry"> <input type="hidden" id="start-time" name="startTime" value="' + timer + '"> <input type="submit" value="submit">  </form> <script> var time = setInterval(function() { var startTime = parseInt(document.getElementById("startTime").value); var elapsedTime = Date.now() - startTime; var wordsEntered = document.getElementById("entry").value.split(" ").length; var wpm = Math.round(wordsEntered / (elapsedTime / 1000 / 60));  document.getElementById("wpm").innerHTML = isNaN(wpm) ? 0 : wpm; }, 1000); </script>';
+	     
 	res.send(gamePage)
 })
 
@@ -66,6 +69,16 @@ app.get('/login', (req, res) => {
 app.post('/game', (req, res) => {
 	
 	const entry = req.body.entry;
+	
+	
+	const startTime = req.body.startTime;
+	let timeElapsed = Date.now() - startTime;
+	
+	let wordsEntered = entry.split(' ').length;
+	 
+	let wpm = Math.round(wordsEntered / (timeElapsed / 1000 / 60));
+	
+	globalScore = wpm;
 	
 	if (entry === phrase) {
 		res.redirect('/game');		
