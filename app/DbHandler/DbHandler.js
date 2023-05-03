@@ -14,6 +14,10 @@ class DbHandler {
   } catch (err) {
     console.error(err);
     throw err;
+  } finally {
+  	
+	  await db.close();
+	  
   }
 }
 
@@ -25,11 +29,9 @@ static async findOneUser(user) {
 		
 		const collection = await db.getCollection('users')
 		
-		const user = await collection.findOne({
-			username: user
-		}).toArray();
+		const userResult = await collection.findOne({ username: user });
 		
-		if (user.length > 0) {
+		if (userResult) {
 			
 			return true;
 			

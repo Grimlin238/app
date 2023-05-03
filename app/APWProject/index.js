@@ -71,7 +71,7 @@ const isFound = await handler.findOneUser(user)
 	res.send('<h1> Result </1> <p> user: ' + user + 'sWPM: ' + score + '</p> <a href="/leaderboard"> Go Back to leader Board </a>')
 } else {
 	
-	res.send('<h1> Oops, we ran into a snag </h1> <p> We could not find the user name you were looking for, </p> <a href="/headerboard"> Go Back To Leader Board </a>')
+	res.send('<h1> Oops, we ran into a snag </h1> <p> We could not find the user name you were looking for, </p> <a href="/leaderboard"> Go Back To Leader Board </a>')
 }
 })
 
