@@ -1,6 +1,8 @@
 const express = require('express')
 const handler = require('DbHandler')
+const api = require('api')
 const app = express();
+const aPi = new api('http://api.quotable.io/random') 
 
 app.use(express.urlencoded({
 	extended: true
@@ -8,6 +10,17 @@ app.use(express.urlencoded({
 app.use(express.json())
 
 var globalUser = "" // This will hold the user name when accessing it in local scopes
+var globalScore = 0; // This will hold a score when in the game
+var phrase = ''
+
+app.get('/game', async (req, res) => {
+	
+	
+	phrase = await aPi.getData();
+	let gamePage = '<nav style="background: blue;"> <a href="/dashboard"> Leave and go back to dashboard </a> </nav> <h1> Let us begin! </h1> <form method="post"> <h1> Enter the phrase below: </h1> <p> WPM: ' + globalScore + ' </p> <p> Phrase: ' + phrase + '</p> <input name="entry"> <input type="submit" value="submit"> </form>'
+	
+	res.send(gamePage)
+})
 
 app.get('/', (req, res) => {
   res.send('<h1> Welcome to insert app name </h1> <ul> <li> <a href="/create"> Create an account </a> </li></li> <a href="/login"> Log in </a> </li> </ul>');
@@ -50,10 +63,21 @@ app.get('/login', (req, res) => {
   res.send('<h1> Log in </h1><form method="post"><h2> User name </h2><input name="userName"><h2> Password </h2><input name="passWord"><input type="submit" value="Log in"></form>');
 });
 
+app.post('/game', (req, res) => {
+	
+	const entry = req.body.entry;
+	
+	if (entry === phrase) {
+		res.redirect('/game');		
+	} else {
+		res.send('<h1> Sorry! That is not correct. </h1> <p> Click keep playing or back to dash to return to the dashboard </p> <a href="/game"> Keep Playing! </a> <a href="/dashboard"> Back To Dashboard </a>')
+ 
+	}
+})
 app.post('/create', async (req, res) => {
   const userName = req.body.userName;
   const pass = req.body.passWord;
-  await addUser(userName, pass);
+  await handler.addUser(userName, pass);
   await handler.addScore(userName, 0)
   globalUser = userName;
   

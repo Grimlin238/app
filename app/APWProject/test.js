@@ -1,23 +1,12 @@
-let testHandle = require("DbHandler")
+var api = require('api')
 
- 
-async function tester() {
-	
-	let found = await testHandle.findOneUser('NoProbBob')
-if (found)
-	
-{
-	
-	console.log("Not found");
-	
+var get = new api('http://api.quotable.io/random')
+
+
+async function main() {
+var word = await get.getData();
+
+console.log(word)
 }
 
-else {
-	
-	console.log("Not found");
-	
-}
-
-}
-
-tester()
+main()
