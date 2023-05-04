@@ -14,11 +14,7 @@ class DbHandler {
   } catch (err) {
     console.error(err);
     throw err;
-  } finally {
-  	
-	  await db.close();
-	  
-  }
+  } 
 }
 
 static async findOneUser(user) {
@@ -73,11 +69,8 @@ static async findUser(user, pass) {
 		
 		console.log(error);
 		
-	} finally {
-		
-		await db.close()
-		
 	}
+	
 }
 
 static async addScore(userName, score) {
@@ -94,16 +87,15 @@ static async addScore(userName, score) {
     const scoresCollection = await db.getCollection('scores');
     const newScore = {
       score: score,
-      user_id: user._id
+      username: user._id
     };
     
     const result = await scoresCollection.insertOne(newScore);
     console.log('Score ${score} added for user ${user.username}');
   } catch (error) {
     console.log(error);
-  } finally {
-    await db.close();
   }
+  
 }
 
 static async updateScore(forUser, withScore) {
@@ -128,23 +120,22 @@ static async updateScore(forUser, withScore) {
 			
 		}
 		
-		const scoreRes = await scoreCol.updateOne({user_id: userRes._id}, { $set: { score: withScore}});
+		const scoreRes = await scoreCol.updateOne({username: userRes._id}, { $set: { score: withScore}});
 		
 	} catch(err) {
 		
 		console.log(err)
 		
-	} finally {
-		
-		await db.close();
-		
 	}
+	
 }
 
 static async getScore(userName) {
   try {
     const base = await db.get('wordGame');
     const usersCollection = await db.getCollection('users');
+	const scoresCollection = await db.getCollection('scores');
+	
     const user = await usersCollection.findOne({ username: userName });
     
     if (!user) {
@@ -152,47 +143,45 @@ static async getScore(userName) {
       return 0;
     }
     
-    const scoresCollection = await db.getCollection('scores');
-    const userScore = await scoresCollection.findOne({ user_id: user._id });
-    
-    if (!userScore) {
+     
+    const score = await scoresCollection.findOne({ username: user._id });
+	
+    if (!score) {
       console.log('Score not found');
-      return 0;
     }
     
-    console.log('Score for user ${user.username}: ${userScore.score}');
-    return userScore.score;
+    return score.score;
   } catch (error) {
     console.log(error);
     return 0;
-  } finally {
-    await db.close();
   }
+  
 }
 
 
 static async leaderBoard() {
 	try {
-	const base = await db.get('wordGame')
-const users = await db.getCollection('users')	
-	const collection = await db.getCollection('scores')
+		const base = await db.get('wordGame');
+		
+		const scoreCollection = await db.getCollection('scores')
+		
+		const topTen = await scoreCollection.aggregate([
+			{ $lookup: { from: 'users', localField: 'username', foreignField: '_id', as: 'user' } },
+		 { $unwind: '$user' },
+		{ $sort: { score: -1 } },
+		{ $limit: 10 }, 
+		{ $project: { _id: 0, username: '$user.username', score: 1 } }
 	
-	const top = await collection.find().sort({score: -1 }).limit(10).toArray();
-	const leader = await Promise.all(top.map(async (score) => {
-		const user = await users.findOne({_id:score.user._id});return {
-			username: user.username, score:score.score
-		}; 
-	}))
-	return leader;
+	]).toArray();
+	
+	return topTen;
+	
 	} catch(error) {
 		
 		console.log(error)
 		return []
-	} finally {
-		
-		await db.close();
-		
-	} 
+	}
+	 
 }
 }
 
