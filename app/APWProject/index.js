@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 /**
 Tyion and Abner:
-Creating log in page
+Creating create account page
 */
 
 app.get('/create', (req, res) => {
@@ -109,7 +109,6 @@ app.get('/login', (req, res) => {
 
 /**
 Tyion:
-
 Handling data from /game in post request
 */
 
