@@ -1,4 +1,11 @@
-const { MongoClient } = require('mongodb');
+/**
+dbManager.js
+Authors:
+Jonah Szymanski
+Tyion Lashley
+The dbManager file includes method for communicating with the db and retrieving collections
+*/
+ const { MongoClient } = require('mongodb');
 const url = 'mongodb://127.0.0.1:27017/';
 const client = new MongoClient(url, { useUnifiedTopology: true });
 let db;
@@ -21,7 +28,11 @@ const database = {
     }
     return db;
   },
-
+/**
+  Tyion:
+  The following method gets a collection and returns it
+  */
+  
 async getCollection(collectionName) {
     if (!db) {
       throw new Error('A database connection has not been established');

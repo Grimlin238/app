@@ -1,8 +1,19 @@
+/**
+DbHandler.js
+Author: Tyion Lashley
+This file handles adding, updating, and grabing data from collections
+in the wordGame db
+*/
+
 var db = require('databasemanager')
 
 class DbHandler {
 	
-	
+/**
+	Tyion:
+	The following method adds a user to the database
+	*/
+		
 	static async addUser(name, pass) {
   try {
     const base = await db.get('wordGame');
@@ -16,6 +27,12 @@ class DbHandler {
     throw err;
   } 
 }
+/**
+Tyion:
+The following method finds a user in the db
+This is useful for looking up a user in the db
+while on the leaderpage
+*/
 
 static async findOneUser(user) {
 	
@@ -41,6 +58,12 @@ static async findOneUser(user) {
 		
 	}
 }
+
+/**
+Tyion:
+The following method looks up a user in the db
+This will be used on the log in page
+*/
 
 static async findUser(user, pass) {
 	
@@ -73,6 +96,13 @@ static async findUser(user, pass) {
 	
 }
 
+/**
+Tyion:
+The following method is used for adding a score to the db for a specific user
+Useful on account creation
+when giving a user an initial score
+*/
+
 static async addScore(userName, score) {
   try {
     const base = await db.get('wordGame');
@@ -97,6 +127,12 @@ static async addScore(userName, score) {
   }
   
 }
+
+/**
+Tyion:
+The following method updates a users score after a wpm is calculated
+on the gave page
+*/
 
 static async updateScore(forUser, withScore) {
 	
@@ -130,6 +166,11 @@ static async updateScore(forUser, withScore) {
 	
 }
 
+/**
+Tyion:
+The following method gets a score for a scpecific user
+*/
+
 static async getScore(userName) {
   try {
     const base = await db.get('wordGame');
@@ -158,6 +199,11 @@ static async getScore(userName) {
   
 }
 
+/**
+Tyion:
+The following method prints the top tne scores in the db
+useful for the leaderboard page
+*/
 
 static async leaderBoard() {
 	try {

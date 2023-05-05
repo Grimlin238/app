@@ -1,3 +1,9 @@
+/**
+api.js
+Author: Tyion Lashley
+This file manages grabing data from the api
+*/
+
 class api {
 	
 	constructor(apiUrl) {
@@ -6,6 +12,11 @@ class api {
 		
 	}
 	
+/**
+	Tyion:
+	Method to get data from api
+	*/
+		
 	async getData() {
 		
 		try {
