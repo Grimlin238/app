@@ -1,15 +1,21 @@
 /**
 dbManager.js
 Authors:
-Jonah Szymanski
-Tyion Lashley
+Jonah Szymanski (Majority of code)
+Tyion Lashley (One method, and packaged the file for NPM)
 The dbManager file includes method for communicating with the db and retrieving collections
+The DB itself created by Jonah Szymanski
 */
- const { MongoClient } = require('mongodb');
+
+// Jonah: Import the MongoClient class and set the database URL
+const { MongoClient } = require('mongodb');
 const url = 'mongodb://127.0.0.1:27017/';
+
+// Jonah: Create a new MongoClient instance and a variable to store the db object
 const client = new MongoClient(url, { useUnifiedTopology: true });
 let db;
 
+// Jonah: connect to the MongoDB database
 async function connect(dbName) {
   try {
     await client.connect();
@@ -21,6 +27,7 @@ async function connect(dbName) {
   }
 }
 
+// Jonah: An object with methods for accessing the db and its collections
 const database = {
   async get(dbName) {
     if (!db) {
@@ -40,6 +47,7 @@ async getCollection(collectionName) {
     return db.collection(collectionName);
   },
 
+// Jonah: An async method to close the DB connection
   async close() {
     try {
       await client.close();
