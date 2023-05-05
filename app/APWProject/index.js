@@ -24,20 +24,20 @@ Creating the game page and calculating words per minutes
 */
 
 app.get('/game', async (req, res) => {
-	// Grabing phrase from API 	
+	// Grabbing phrase from API 	
 	phrase = await aPi.getData();
 	
 	let timer = Date.now(); // setts a timer
 	
-	let gamePage = '<nav style="background-color: blue; color: white;"> <a href="/dashboard"> Leave and go back to dashboard </a> </nav> <h1> Let us begin! </h1> <form method="post"> <h1> Enter the phrase below: </h1> <p> WPM: <span id="wpm">' + globalScore + '</span> </p> <p> Phrase: ' + phrase + '</p> <label for="entry"> Answer: </label> <input type="text" id="entry" name="entry"> <input type="hidden" id="start-time" name="startTime" value="' + timer + '"> <input type="submit" value="submit">  </form> <script> var time = setInterval(function() { var startTime = parseInt(document.getElementById("startTime").value); var elapsedTime = Date.now() - startTime; var wordsEntered = document.getElementById("entry").value.split(" ").length; var wpm = Math.round(wordsEntered / (elapsedTime / 1000 / 60));  document.getElementById("wpm").innerHTML = isNaN(wpm) ? 0 : wpm; }, 1000); </script>';
+	let gamePage = '<nav style="background-color: DodgerBlue; color: white;"> <a href="/dashboard"> Leave and go back to dashboard </a> </nav> <h1> Let us begin! </h1> <form method="post"> <h1> Enter the phrase below: </h1> <p> WPM: <span id="wpm">' + globalScore + '</span> </p> <p> Phrase: ' + phrase + '</p> <label for="entry"> Answer: </label> <input type="text" id="entry" name="entry"> <input type="hidden" id="start-time" name="startTime" value="' + timer + '"> <input type="submit" value="submit">  </form> <script> var time = setInterval(function() { var startTime = parseInt(document.getElementById("startTime").value); var elapsedTime = Date.now() - startTime; var wordsEntered = document.getElementById("entry").value.split(" ").length; var wpm = Math.round(wordsEntered / (elapsedTime / 1000 / 60));  document.getElementById("wpm").innerHTML = isNaN(wpm) ? 0 : wpm; }, 1000); </script>';
 	     
 	res.send(gamePage)
 })
 
 
 /**
-Tyion:
-Creating main rout
+Tyion and Abner:
+Creating main route
 with options to login and create account
 */
 
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 });
 
 /**
-Tyion:
+Tyion and Abner:
 Creating log in page
 */
 
@@ -62,18 +62,18 @@ Creating dashboard
 
 app.get('/dashboard', async (req, res) => {
 globalScore = await handler.getScore(globalUser)
-	res.send('<nav style="background-color: blue; color: white:"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Ready to start playing? </h1> <a href="/game"> Play Now! </a>')
+	res.send('<nav style="background-color: DodgerBlue; color: white:"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Ready to start playing? </h1> <a href="/game"> Play Now! </a>')
 
 })
 
 /**
-Tyion:
+Tyion and Abner:
 Creating profile page
 */
 
 app.get('/profile', async (req, res) => {
 	let wpm = await handler.getScore(globalUser)
-	res.send('<nav style="background-color: blue; color: white;"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Welcome to your profile </h1><br><h1> Profile Information</h1><p> Username: @' + globalUser + ' </p><br><p> WPM (Words Per Minute): ' + wpm + ' </p>')
+	res.send('<nav style="background-color: DodgerBlue; color: white;"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Welcome to your profile </h1><br><h1> Profile Information</h1><p> Username: @' + globalUser + ' </p><br><p> WPM (Words Per Minute): ' + wpm + ' </p>')
 	
 })
 /**
@@ -85,7 +85,7 @@ app.get('/leaderboard', async (req, res) => {
 	
 	var userScores = await handler.leaderBoard();
 	
-	var leaderPage = '<nav style="background-color: blue; color: white:"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Find your friends by their username </h1> <form method="post"> <h2> Enter username without the @ sign <h2> <input name="user"> <input type="submit" value="Search"> </form> <h3> Are you on the leader board? </h3> <ol>'
+	var leaderPage = '<nav style="background-color: DodgerBlue; color: white:"> <a href="/login"> Log Out </a> <a href="/dashboard"> Home </a> <a href="/profile"> Profile </a> <a href="/leaderboard"> Leader Board </a> </nav> <h1> Find your friends by their username </h1> <form method="post"> <h2> Enter username without the @ sign <h2> <input name="user"> <input type="submit" value="Search"> </form> <h3> Are you on the leader board? </h3> <ol>'
 	
 	for (let i = 0; i < userScores.length; i++) {
 		const {username, score} = userScores[i];
@@ -140,7 +140,7 @@ app.post('/game', async (req, res) => {
 })
 
 /**
-Tyion:
+Tyion and Abner:
 Handling information sent from /create user route in post request
 User should not be able to create account if one already exists
 */
@@ -184,7 +184,7 @@ const isFound = await handler.findOneUser(user)
 })
 
 /**
-Tyion:
+Tyion and Abner:
 Handling login from from post request
 redirecting user to dashboard after logging in
 */
