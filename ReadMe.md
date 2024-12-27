@@ -1,5 +1,6 @@
 # Type Tonic
 # Created by Tyion Lashley, Jonah Szymanski, and Abner Garcia
+# Class Team Project: Final Grade (A)
 
 ## About the game
 Type tonic is a game that pulls random phrases from an api. The user will type the phrase as fast as they can to generate there WPM, Words Per Minute. The user also has the ability to see the top ten users on a leader board, view their own WPM, and search for their friends.
